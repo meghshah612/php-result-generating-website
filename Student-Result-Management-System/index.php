@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSRMS</title>
+    <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+</head>
+<body>
+    <div class="title"> 
+        <span style="background:brown; color:white">Student Result Management System</span>
+    </div>
+    
+    <hr style="border:3px solid black">
+    <marquee>
+    <div class="floating" style=
+            "height: 30px; width: 700px; color:red;
+            background: rgb(200, 255, 200);
+            padding: 10px">
+        *Class 7 Results 2022* | *Class 8 Results 2022* | *Class 9 Results 2022* | *Class 10 Results 2022*
+    </div>
+    </marquee>
+    <div class="main">
+        <div class="login">
+            <form action="" method="post" name="login">
+                <fieldset>
+                    <legend class="heading">Admin Login</legend>
+                    <input type="text" name="userid" placeholder="Enter Username" autocomplete="off">
+                    <input type="password" name="password" placeholder="Enter Password" autocomplete="off">
+                    <input type="submit" value="Login">
+                </fieldset>
+            </form>    
+        </div>
+        <div class="search">
+            <form action="./student.php" method="get">
+                <fieldset>
+                    <legend class="heading">Student's Section</legend>
+
+                    <?php
+                        include('init.php');
+
+                        $class_result=mysqli_query($conn,"SELECT `name` FROM `class`");
+                            echo '<select name="class">';
+                            echo '<option selected disabled>--Select Class--</option>';
+                        while($row = mysqli_fetch_array($class_result)){
+                            $display=$row['name'];
+                            echo '<option value="'.$display.'">'.$display.'</option>';
+                        }
+                        echo'</select>'
+                    ?>
+
+                    <input type="text" name="rn" placeholder="Roll Number">
+                    <input type="submit" value="Get Result">
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
+
+<?php
+    include("init.php");
+    session_start();
+
+    if (isset($_POST["userid"],$_POST["password"]))
+    {
+        $username=$_POST["userid"];
+        $password=$_POST["password"];
+        $password = md5($_POST["password"]);
+        $sql = "SELECT userid FROM admin_login WHERE userid='$username' and password = '$password'";
+        $result=mysqli_query($conn,$sql);
+
+        // $row=mysqli_fetch_array($result);
+        $count=mysqli_num_rows($result);
+        
+        if($count==1) {
+            $_SESSION['login_user']=$username;
+            header("Location: dashboard.php");
+        }else {
+            echo '<script language="javascript">';
+            echo 'alert("Invalid Username or Password")';
+            echo '</script>';
+        }
+        
+    }
+?>
+
